@@ -1,0 +1,251 @@
+# the following are the equations of kinase pathways
+
+#pathway of ApNT --> Raf
+
+pRaf'=((K_fRaf*ApNT+K_fRafb)*Raf-K_bRaf*pRaf)
+
+Raf=Raf_total-pRaf
+
+p K_fRaf=0.0373
+p K_fRafb=0.000133
+p K_bRaf=0.000378
+p Raf_total=0.5
+
+
+#pathway of  Raf --> MAPKK
+
+MAPKK'=-K_fMAPKK*pRaf*(MAPKK/(MAPKK+K_1mkk))+(K_bMAPKKb+K_bMAPKK*act_dp38*heav(ppMAPKK-0.25))*(pMAPKK/(pMAPKK+K_2mkk))
+
+ppMAPKK'=K_fMAPKK*pRaf*(pMAPKK/(pMAPKK+K_1mkk))-(K_bMAPKKb+K_bMAPKK*act_dp38*heav(ppMAPKK-0.25))*(ppMAPKK/(ppMAPKK+K_2mkk))
+
+pMAPKK=MAPKK_tt-MAPKK-ppMAPKK
+
+
+p K_fMAPKK=0.41
+p K_bMAPKKb=0.04
+p K_bMAPKK=0.04
+p K_1mkk=0.20
+p K_2mkk=0.19
+p MAPKK_tt=0.5
+
+
+# pathway of p38 MAPK --> MAPKK
+act_dp38'=(k_EP38MEK*(dpp38-0.15)*heav(dpp38-0.15)-k_dEPMEK*act_dp38)
+k_EP38MEK=0.33
+k_dEPMEK=0.0013
+
+#pathway of  MAPKK --> MAPK
+MAPK'=(-K_fMAPK*(ppMAPKK+ppMEKtgf)*(MAPK/(MAPK+K_1mk))+K_bMAPK*(pMAPK/(pMAPK+K_2mk)))
+ppMAPK'=(K_fMAPK*(ppMAPKK+ppMEKtgf)*(pMAPK/(pMAPK+K_1mk))-K_bMAPK*(ppMAPK/(ppMAPK+K_2mk)))
+pMAPK=MAPK_tt-ppMAPK-MAPK
+
+
+p K_fMAPK=0.41
+p K_1mk=0.19
+p K_2mk=0.21
+P K_bMAPK=0.12
+p MAPK_tt=0.5
+
+#pathway of  TGF --> MAPK
+MEKtgf'=-K_fMAPKK*TGF*(MEKtgf/(MEKtgf+K_1mkk))+(K_bMAPKKb+K_bMAPKK*act_dp38)*(pMEKtgf/(pMEKtgf+K_2mkk))
+ppMEKtgf'=K_fMAPKK*TGF*(pMEKtgf/(pMEKtgf+K_1mkk))-(K_bMAPKKb+K_bMAPKK*act_dp38)*(ppMEKtgf/(ppMEKtgf+K_2mkk))
+pMEKtgf=MAPKK_tt/6-MEKtgf-ppMEKtgf
+
+TGF'=(k_TBLTGF*TBL^2/(TBL^2+(0.0078)^2)-k_dTGF*TGF)
+p k_TBLTGF=0.0087
+p k_dTGF=0.0058
+
+#pathway of 5-HT--> p38 MAPK
+pRafP'=((k_fRafp38*5HT+k_bfRfp38)*RafP-k_bRafp38*pRafP)
+RafP=RafP_to-pRafP
+
+p k_fRafp38=0.0009
+p k_bfRfp38=0.036
+p k_bRafp38=0.1
+p RafP_to=0.5
+
+
+MEK6'=(-K_fMAPKK*pRafP*(MEK6/(MEK6+K_1mkk))+K_bMAPKK*(pMEK6/(pMEK6+K_2mkk)))
+ppMEK6'=(K_fMAPKK*pRafP*(pMEK6/(pMEK6+K_1mkk))-K_bMAPKK*(ppMEK6/(ppMEK6+K_2mkk)))
+pMEK6=MEK6_tt-MEK6-ppMEK6
+
+
+p38'=(-(K_fp38)*(p38/(p38+K_1mk))+K_b38*(pp38/(pp38+K_2mk)))
+dpp38'=((K_fp38)*(pp38/(pp38+K_1mk))-K_b38*(dpp38/(dpp38+K_2mk)))
+pp38=p38_total-dpp38-p38
+
+K_fp38=(k_fp38MEK*ppMEK6+k_fp38RSK*pRSK)/(1+act5HT)
+act5HT'=(k_E5HT*5HT/(5HT+50)-k_dE5HT*act5HT)
+
+
+p k_fp38MEK=0.25 
+p k_fp38RSK=0.99 
+p MEK6_tt=0.5
+p p38_total=0.5
+p K_b38=0.12
+p k_E5HT=0.8
+p k_dE5HT=1
+
+
+
+#pathway of PKA and ERK--> RSK
+pRSK'=((0.262*(PKAC-0.35)*heav(PKAC-0.35)+0.82*ppMAPK)*RSK-0.31*(pRSK/(pRSK+0.2)))
+RSK=RSK_total-pRSK
+RSK_total=0.5
+
+
+#pathway of 5-HT--> PKA
+cAMP'=lamda*(5HT/(5HT+K_5HT)+ApNT/(ApNT+12))-K_bcamp*cAMP+cAMPbas
+PKAR'=V_syn+K_fpka*PKARC*cAMP^2-K_bpka*PKAR*PKAC-K_dpka*PKAR
+PKARC'=-K_fpka*PKARC*cAMP^2+K_bpka*PKAR*PKAC-K_dpka*PKARC
+PKAC'=V_syn+K_fpka*PKARC*cAMP^2-K_bpka*PKAR*PKAC-K_dpka*PKAC
+
+
+p V_syn=0
+p K_dpka=0
+p cAMPbas=0.7
+p lamda=3.64
+p K_5HT=85
+p K_bcamp=1
+p K_fpka=20
+p K_bpka=12
+
+
+#pathway of PKA--> ApNT
+
+ApNT'=(k_fNT*(PKAC-0.35)/((PKAC-0.35)+1)*heav(PKAC-0.35)-k_bNT*ApNT)
+p k_fNT=0.3
+p k_bNT=0.05
+
+#initial values of kinases
+init pRaf=0.13
+init MAPKK=0.095
+init ppMAPKK=0.26
+init MAPK=0.19
+init PPMAPK=0.145
+
+init pRafP=0.13
+init MEK6=0.095
+init ppMEK6=0.26
+
+init p38=0.19
+init dpp38=0.145
+init act_dp38=0
+
+init PKAC=0.35
+init cAMP=0.7
+init PKAR=0.35
+
+init PKARC=0.15
+
+init pRSK=0.042
+
+
+
+
+
+
+
+# the following are the equations of CREB1, CREB2, and CEBP
+
+#phosphorylated CREB1 protein
+pCREB1'=(k_RSKCREB*(pRSK-0.042)*heav(pRSK-0.042)+k_PKACREB*(PKAC-0.35)*heav(PKAC-0.35))*CREB1-K_dephC1*pCREB1
+
+CREB1=0.05-pCREB1
+
+p k_RSKCREB=1.25 
+p k_PKACREB=0.3
+p K_dephC1=0.05
+
+
+#phosphorylated CREB2 protein
+
+pCREB2e'=(K_phosC2*ppMAPK*CREB2-K_dephC2*pCREB2e)
+
+pCREB2p'=(K_phosC2*dpp38*CREB2-K_dephC2*pCREB2p)
+
+CREB2=0.05-pCREB2e-pCREB2p
+
+p K_phosC2=3.5
+p K_dephC2=0.5
+
+
+
+#synthesis OF TGF protein
+
+TBL'=(pCREB1^2/0.003^2)/(1+pCREB1^2/0.003^2+CREB2^2/0.003^2+pCREB2p^2/0.0003^2)-TBL
+
+
+
+#initial values of pCREB1, pCREB2, CEBP
+init pCREB1=0
+init pCREB2e=0.0164
+init pCREB2p=0.0168
+
+
+
+# training protocols, 5 PULSES OF 5-HT
+
+5HT'=(50*(on0*heav(t-t2)*heav(t2+5-t)+on1*heav(t-t2-inter1)*heav(inter1+5+t2-t)+on2*heav(t-t2-inter1-inter2)*heav(inter1+inter2+5+t2-t)+on3*heav(t-t2-inter1-inter2-inter3)*heav(inter1+inter2+inter3+5+t2-t)+on4*heav(t-t2-inter1-inter2-inter3-inter4)*heav(inter1+inter2+inter3+inter4+5+t2-t))*turnon-5HT)
+
+#ISI 1
+inter1=5*(1+a1)
+#ISI 2
+inter2=5*(1+a2)
+#ISI 3
+inter3=5*(1+a3)
+#ISI 4
+inter4=5*(1+a4)
+
+
+# On and off of 1st pulse
+p on0=1
+
+# On and off of 2nd pulse
+p on1=1
+
+# On and off of 3rd pulse
+p on2=0
+
+# On and off of 4th pulse
+p on3=0
+
+# On and off of 5th pulse
+p on4=0
+
+p turnoff=0
+p turnon=1
+#pre-run for 2 days
+p t2=2880
+
+p step=8333
+
+
+
+a4=(step-10*flr(step/10))
+a3=flr((step-100*flr(step/100))/10)
+a2=flr((step-1000*flr(step/1000))/100)
+a1=flr(step/1000)
+
+
+aux 1=(t-t2)
+aux 4=5HT
+aux 7=a1
+aux 8=a2
+aux 9=a3
+aux 10=a4
+aux 14=ApNT
+aux 18=ppMAPK/0.14*100
+aux 19=dpp38/0.145*100
+AUX 20=pRSK/0.041*100
+aux 22=PKAC/0.35*100
+aux 24=TGF
+aux 25=TBL
+aux 26=pCREB1
+aux 28=pCREB2p
+
+@ total=3200, xlo=0, xhi=5000, ylo=0, yhi=10, bounds=10e30, MAXSTOR=1300000,xp=vs, yp=mk,nout=200, dt=0.01,
+@ delay=6000
+@ output=test1.txt
+
+#@ RANGE=1, RANGEOVER=step2, RANGESTEP=10, RANGELOW=0, RANGEHIGH=10, RANGERESET=yes, RANGEOLDIC=yes, output=test7
